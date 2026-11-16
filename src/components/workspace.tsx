@@ -8,6 +8,7 @@ import {
 } from "react";
 import {
   BookOpen,
+  Sparkles,
   LayoutDashboard,
   FolderOpen,
   GraduationCap,
@@ -92,9 +93,11 @@ import {
   widgetIds,
 } from "@/lib/model";
 import { Library, CalendarPanel } from "./google-panels";
+import AssistantPanel from "./assistant-panel";
 
 const nav = [
   { id: "home", label: "Inicio", icon: LayoutDashboard },
+  { id: "assistant", label: "Asistente IA", icon: Sparkles },
   { id: "library", label: "Biblioteca", icon: FolderOpen },
   { id: "courses", label: "Cursos y apuntes", icon: GraduationCap },
   { id: "practice", label: "Práctica", icon: ClipboardCheck },
@@ -1250,6 +1253,13 @@ export default function Workspace({
                   />
                 </>
               )}
+              <div hidden={view !== "assistant"}>
+                <AssistantPanel
+                  {...props}
+                  demo={demo}
+                  active={view === "assistant"}
+                />
+              </div>
               {view === "courses" && <Courses {...props} />}
               {view === "notes" && <Notes {...props} />}
               {view === "projects" && <Projects {...props} />}
@@ -1450,6 +1460,7 @@ function greeting() {
   return h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches";
 }
 const descriptions: Record<string, string> = {
+  assistant: "Explica, resume y organiza. Tú decides qué guardar.",
   library: "Tus materiales, organizados en un solo lugar.",
   courses: "Construye tu aprendizaje, tema a tema.",
   practice: "Pon a prueba lo que sabes y aprende de tus errores.",

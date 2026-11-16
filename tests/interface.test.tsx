@@ -465,5 +465,195 @@ test("flujos de interfaz en DOM simulado", async (t) => {
       }
     },
   );
+  await t.test(
+    "Asistente IA exige consentimiento y confirma tareas, preguntas, eventos y biblioteca",
+    async () => {
+      cleanup();
+      localStorage.clear();
+      const originalFetch = globalThis.fetch;
+      const seed = initialState();
+      seed.data.courses = [newItem({ title: "Biología" })];
+      const result = {
+        answer: "Podemos repasar la célula.",
+        title: "Resumen de la célula",
+        summary: "La célula es la unidad básica de la vida.",
+        questions: [
+          {
+            title: "¿Cuál es la unidad básica de la vida?",
+            choices: ["Célula", "Tejido", "Órgano", "Sistema"],
+            correct: 0,
+            explanation: "Las células son las unidades funcionales básicas.",
+          },
+        ],
+        proposals: [
+          {
+            kind: "task",
+            title: "Repasar la célula",
+            due: "2026-12-01",
+            end: null,
+            details: "Leer el resumen y practicar.",
+          },
+          {
+            kind: "event",
+            title: "Sesión de biología",
+            due: "2026-12-01T15:00:00-05:00",
+            end: "2026-12-01T15:25:00-05:00",
+            details: "Bloque de concentración.",
+          },
+        ],
+      };
+      let generations = 0,
+        eventWrites = 0,
+        exports = 0;
+      globalThis.fetch = async (url, init) => {
+        const path = String(url);
+        if (path === "/api/state" && init?.method === "PUT") {
+          const payload = JSON.parse(String(init.body));
+          return Response.json({
+            state: { ...payload.state, revision: payload.state.revision + 1 },
+            etag: '"next"',
+            fileId: "state-file",
+          });
+        }
+        if (path === "/api/state")
+          return Response.json({
+            state: seed,
+            etag: '"initial"',
+            fileId: "state-file",
+          });
+        if (path === "/api/assistant" && init?.method === "POST") {
+          const payload = JSON.parse(String(init.body));
+          assert.equal(payload.consent, true);
+          generations++;
+          return Response.json({
+            result,
+            usage: { used: 1, limit: 20 },
+            model: "gemini-3.5-flash-lite",
+          });
+        }
+        if (path === "/api/assistant")
+          return Response.json({
+            available: true,
+            model: "gemini-3.5-flash-lite",
+          });
+        if (path === "/api/calendar" && init?.method === "POST") {
+          const payload = JSON.parse(String(init.body));
+          assert.equal(payload.confirmed, true);
+          assert.equal(payload.title, "Sesión de biología");
+          eventWrites++;
+          return Response.json({ id: "event-unit-test" });
+        }
+        if (path === "/api/assistant/export") {
+          const payload = JSON.parse(String(init?.body));
+          assert.equal(payload.confirmed, true);
+          assert.equal(payload.saveToLibrary, true);
+          exports++;
+          return Response.json({
+            id: "summary-unit-test",
+            name: "Resumen.txt",
+            url: "https://drive.google.com/file/d/summary-unit-test/view",
+          });
+        }
+        return Response.json({ files: [], items: [] });
+      };
+      try {
+        const view = render(
+          <Workspace demo={false} name="Usuario" email="owner@example.com" />,
+        );
+        await waitFor(() =>
+          assert.equal(
+            view
+              .getByRole("button", { name: "Tarea" })
+              .hasAttribute("disabled"),
+            false,
+          ),
+        );
+        await user.click(view.getByRole("button", { name: "Asistente IA" }));
+        const send = view.getByRole("button", { name: "Enviar a Gemini" });
+        await user.type(
+          view.getByLabelText("Tu mensaje"),
+          "Explícame la célula y ayúdame a organizar el estudio.",
+        );
+        assert.equal(send.hasAttribute("disabled"), true);
+        await user.click(
+          view.getByRole("checkbox", { name: /Acepto enviar mis mensajes/ }),
+        );
+        await waitFor(() => assert.equal(send.hasAttribute("disabled"), false));
+        await user.click(send);
+        await view.findByText("Podemos repasar la célula.");
+        assert.equal(generations, 1);
+        assert.equal(eventWrites, 0);
+        assert.equal(exports, 0);
+        assert.equal(localStorage.getItem("mep-draft-owner@example.com"), null);
+        await user.click(
+          view.getAllByRole("button", { name: "Revisar propuesta" })[0],
+        );
+        await user.click(view.getByRole("button", { name: "Cancelar" }));
+        assert.equal(localStorage.getItem("mep-draft-owner@example.com"), null);
+        await user.click(
+          view.getAllByRole("button", { name: "Revisar propuesta" })[0],
+        );
+        await user.click(
+          view.getByRole("button", { name: "Confirmar y crear tarea" }),
+        );
+        await waitFor(() =>
+          assert.equal(
+            JSON.parse(localStorage.getItem("mep-draft-owner@example.com")!)
+              .data.tasks[0].title,
+            "Repasar la célula",
+          ),
+        );
+        await user.click(
+          within(
+            view
+              .getByText("Sesión de biología")
+              .closest(".assistant-proposal") as HTMLElement,
+          ).getByRole("button", { name: "Revisar propuesta" }),
+        );
+        assert.equal(eventWrites, 0);
+        await user.click(
+          view.getByRole("button", {
+            name: "Confirmar y crear en Google Calendar",
+          }),
+        );
+        await waitFor(() => assert.equal(eventWrites, 1));
+        await user.click(
+          view.getByRole("button", { name: "Revisar y guardar preguntas" }),
+        );
+        await user.selectOptions(
+          view.getByLabelText("Curso"),
+          seed.data.courses[0].id,
+        );
+        await user.click(
+          view.getByRole("button", { name: "Confirmar y guardar" }),
+        );
+        await waitFor(() =>
+          assert.equal(
+            JSON.parse(localStorage.getItem("mep-draft-owner@example.com")!)
+              .data.questions[0].correct,
+            0,
+          ),
+        );
+        await user.click(
+          view.getByRole("button", { name: "Guardar en biblioteca (TXT)" }),
+        );
+        assert.equal(exports, 0);
+        await user.click(
+          view.getByRole("button", { name: "Confirmar y guardar" }),
+        );
+        await waitFor(() => assert.equal(exports, 1));
+        await waitFor(() =>
+          assert.equal(
+            JSON.parse(localStorage.getItem("mep-draft-owner@example.com")!)
+              .data.notes[0].category,
+            "Resumen IA",
+          ),
+        );
+      } finally {
+        cleanup();
+        globalThis.fetch = originalFetch;
+      }
+    },
+  );
   dom.window.close();
 });

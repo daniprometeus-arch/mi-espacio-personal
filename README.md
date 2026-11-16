@@ -1,14 +1,18 @@
 # Mi espacio personal
 
-Aplicación privada para un único usuario, preparada para Vercel. Next.js App Router, TypeScript, Tailwind CSS 4, componentes de shadcn/ui con Radix, Recharts y dnd-kit. No contiene asistentes, chats, SDK ni llamadas a modelos de IA. No utiliza Supabase, bases de datos externas ni almacenamiento persistente en el filesystem de Vercel.
+Aplicación privada para un único usuario, preparada para Vercel. Next.js App Router, TypeScript, Tailwind CSS 4, componentes de shadcn/ui con Radix, Recharts y dnd-kit. Incluye un módulo opcional Asistente IA con Gemini, habilitado solo después de configurar una clave privada de un proyecto gratuito sin facturación. No utiliza Supabase, bases de datos externas ni almacenamiento persistente en el filesystem de Vercel.
 
-El diseño se basa en la captura del sitio de referencia facilitado: azul marino, paneles compactos, barra lateral, acentos azules y celestes. El sitio de referencia no se modifica. Esta entrega es código fuente independiente; no se ha desplegado en Vercel ni en Sites.
+El diseño se basa en la captura del sitio de referencia facilitado: azul marino, paneles compactos, barra lateral, acentos azules y celestes. El sitio de referencia no se modifica. Esta actualización es código fuente independiente y no se ha desplegado desde este entorno; la versión publicada permanece sin cambios.
+
+## Asistente IA con Gemini
+
+La integración nueva se documenta en [docs/ASISTENTE_GEMINI.md](docs/ASISTENTE_GEMINI.md): chat, documentos, cuestionarios, propuestas con confirmación y PDF. Añade personalmente GEMINI_API_KEY y GEMINI_FREE_TIER_CONFIRMED en Vercel; no compartas claves. Sin configurar Gemini, los módulos anteriores siguen funcionando.
 
 ## 1. Inicio rápido
 
 **Ruta actual sin configurar tu computadora:** utiliza [docs/VERCEL_GITHUB.md](docs/VERCEL_GITHUB.md) para GitHub privado y variables introducidas personalmente en Vercel. No publiques hasta confirmar el despliegue. El flujo local siguiente es opcional.
 
-Requisitos: Node.js 22 o 24 y npm.
+Requisitos: Node.js 24.x y npm.
 
 Para preparar de forma segura las variables locales sin sobrescribir credenciales, consulta [docs/SECRETOS_LOCALES.md](docs/SECRETOS_LOCALES.md) y ejecuta `npm run prepare:local`. Ese comando deja las credenciales vacías hasta que las completes personalmente. Nunca incluyas `.env.local` en una entrega o repositorio.
 

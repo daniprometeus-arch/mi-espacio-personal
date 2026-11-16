@@ -16,6 +16,11 @@ import {
 import { GET as getBackups } from "../src/app/api/backups/route";
 import { initialState } from "../src/lib/model";
 import { POST as logout } from "../src/app/api/auth/logout/route";
+import {
+  GET as assistantStatus,
+  POST as assistantChat,
+} from "../src/app/api/assistant/route";
+import { POST as assistantExport } from "../src/app/api/assistant/export/route";
 
 test("las API de lectura rechazan solicitudes sin sesión, sin contactar Google", async () => {
   const original = globalThis.fetch;
@@ -30,6 +35,7 @@ test("las API de lectura rechazan solicitudes sin sesión, sin contactar Google"
       () => getFiles(new Request("https://example.com/api/drive")),
       () => getCalendar(new Request("https://example.com/api/calendar")),
       () => getBackups(new Request("https://example.com/api/backups")),
+      () => assistantStatus(),
     ]) {
       const r = await request();
       assert.equal(r.status, 401);
@@ -51,6 +57,8 @@ test("todas las escrituras remotas rechazan CSRF antes de ejecutar operaciones",
     editEvent,
     deleteEvent,
     logout,
+    assistantChat,
+    assistantExport,
   ]) {
     const request = new Request("https://example.com/api/test", {
       method: "POST",
@@ -62,6 +70,22 @@ test("todas las escrituras remotas rechazan CSRF antes de ejecutar operaciones",
     });
     const r = await route(request);
     assert.equal(r.status, 403);
+  }
+});
+test("chat y exportación IA requieren sesión antes de procesar entradas", async () => {
+  process.env.APP_URL = "https://example.com";
+  for (const route of [assistantChat, assistantExport]) {
+    const response = await route(
+      new Request("https://example.com/api/assistant", {
+        method: "POST",
+        headers: {
+          Origin: "https://example.com",
+          "Content-Type": "application/json",
+        },
+        body: "{}",
+      }),
+    );
+    assert.equal(response.status, 401);
   }
 });
 test("una escritura de estado válida requiere sesión aunque el origen sea correcto", async () => {

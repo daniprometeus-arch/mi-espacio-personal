@@ -1,5 +1,7 @@
 # Etapa 1: Google Cloud y OAuth 2.0
 
+Esta guía documenta la base OAuth de la primera etapa. La integración de IA autorizada posteriormente se configura por separado según [ASISTENTE_GEMINI.md](ASISTENTE_GEMINI.md); no requiere nuevos scopes de OAuth.
+
 Esta guía prepara el proyecto existente para tu cuenta. **Detente al terminar la configuración local. No despliegues todavía en Vercel.** El diseño permanece igual; no se añaden Supabase, bases de datos externas, IA ni servicios de pago.
 
 ## Qué queda preparado en el código

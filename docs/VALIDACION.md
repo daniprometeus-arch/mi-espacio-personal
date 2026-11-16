@@ -1,5 +1,7 @@
 # Validación y aceptación
 
+El módulo opcional de Gemini tiene su guía de pruebas y publicación en [ASISTENTE_GEMINI.md](ASISTENTE_GEMINI.md), con resultados actuales en [REVISION_GEMINI.md](REVISION_GEMINI.md).
+
 Para la preparación actual de OAuth, consulta [GOOGLE_CLOUD.md](GOOGLE_CLOUD.md) y el informe [REVISION_OAUTH.md](REVISION_OAUTH.md). La validación con tu cuenta y el despliegue de la lista siguiente pertenecen a etapas posteriores: no los ejecutes antes de completar Google Cloud.
 
 ## Automatización incluida

@@ -1,4 +1,176 @@
 @import "tailwindcss";
+.assistant-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 18px;
+  align-items: start;
+}
+.assistant-main {
+  min-width: 0;
+}
+.assistant-context {
+  position: sticky;
+  top: 18px;
+}
+.assistant-context > p {
+  margin: 10px 0;
+}
+.assistant-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+}
+.assistant-modes button {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.assistant-modes .active {
+  background: #2c7bf622;
+  border-color: var(--blue);
+  color: var(--text);
+}
+.assistant-thread {
+  max-height: 560px;
+  overflow: auto;
+  padding: 18px 2px;
+  min-height: 250px;
+}
+.assistant-message {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  background: var(--input);
+}
+.assistant-message.user {
+  margin-left: 12%;
+  background: #2c7bf613;
+  border-color: #2c7bf633;
+}
+.assistant-message p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  margin-top: 7px;
+}
+.assistant-summary {
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border);
+}
+.assistant-summary > .row {
+  margin-top: 15px;
+}
+.assistant-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 16px 0;
+  line-height: 1.6;
+}
+.assistant-consent input {
+  margin-top: 3px;
+}
+.assistant-composer {
+  border-top: 1px solid var(--border);
+  padding-top: 4px;
+}
+.assistant-proposal {
+  padding: 14px;
+  margin-top: 14px;
+  background: #35b7db09;
+  border: 1px solid #35b7db35;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
+}
+.assistant-proposal strong {
+  display: block;
+  margin-top: 8px;
+}
+.assistant-proposal p {
+  font-size: 12px;
+  color: var(--muted);
+}
+.assistant-questions details {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+.assistant-questions summary {
+  cursor: pointer;
+  font-size: 13px;
+}
+.assistant-questions ol {
+  font-size: 12px;
+  padding-left: 25px;
+  list-style-type: upper-alpha;
+  margin: 12px 0;
+}
+.assistant-source {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--input);
+  border-radius: 8px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.assistant-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px;
+  width: 100%;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  text-align: left;
+}
+.assistant-file:hover {
+  background: var(--panel-hover);
+}
+@media (max-width: 1150px) {
+  .assistant-layout {
+    grid-template-columns: 1fr;
+  }
+  .assistant-context {
+    position: static;
+  }
+}
+@media (max-width: 600px) {
+  .assistant-main .section-title {
+    align-items: flex-start;
+  }
+  .assistant-main .section-title h2 {
+    font-size: 15px;
+  }
+  .assistant-proposal {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .assistant-message.user {
+    margin-left: 5%;
+  }
+  .assistant-thread {
+    max-height: 470px;
+  }
+  .assistant-modes button {
+    padding: 7px;
+    font-size: 10px;
+  }
+}
 @custom-variant dark (&:is([data-theme="dark"] *));
 :root {
   --bg: #061426;

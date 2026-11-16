@@ -1,5 +1,7 @@
 # Resultado de la preparación para GitHub privado y Vercel
 
+Este informe corresponde a la preparación anterior al módulo IA. Para la actualización actual y sus nuevas pruebas, consulta [REVISION_GEMINI.md](REVISION_GEMINI.md).
+
 ## Cambios
 
 - `vercel.json`: preset Next.js, instalación `npm ci`, compilación `npm run build` y `git.deploymentEnabled=false` para detener despliegues automáticos de Git. Los campos utilizados se validaron contra el esquema oficial publicado por Vercel.

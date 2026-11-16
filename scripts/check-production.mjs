@@ -92,6 +92,7 @@ try {
     "/api/drive",
     "/api/drive?id=not-authorized&preview=true",
     "/api/calendar",
+    "/api/assistant",
   ]) {
     const response = await request(path, 401);
     assert.match(response.headers.get("cache-control"), /no-store/);
@@ -109,6 +110,8 @@ try {
   assert.equal(callback.headers.get("set-cookie"), null);
   for (const [path, method] of [
     ["/api/state", "PUT"],
+    ["/api/assistant", "POST"],
+    ["/api/assistant/export", "POST"],
     ["/api/drive", "POST"],
     ["/api/drive", "PATCH"],
     ["/api/drive", "DELETE"],

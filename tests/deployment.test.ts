@@ -26,6 +26,10 @@ test("ningún componente de cliente alcanza módulos de tokens o variables priva
     "oauth.ts",
     "google.ts",
     "backups.ts",
+    "gemini.ts",
+    "assistant-documents.ts",
+    "assistant-quota.ts",
+    "assistant-pdf.ts",
   ]);
   function visit(file: string) {
     if (visited.has(file)) return;
@@ -38,7 +42,7 @@ test("ningún componente de cliente alcanza módulos de tokens o variables priva
     const source = readFileSync(file, "utf8");
     assert.doesNotMatch(
       source,
-      /process\.env\.(GOOGLE_CLIENT_SECRET|SESSION_SECRET|ALLOWED_EMAIL)/,
+      /process\.env\.(GOOGLE_CLIENT_SECRET|SESSION_SECRET|ALLOWED_EMAIL|GEMINI_API_KEY)/,
     );
     const parsed = ts.createSourceFile(
       file,

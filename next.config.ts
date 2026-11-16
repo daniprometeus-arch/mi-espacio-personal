@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/api/assistant/export": ["./src/assets/DejaVuSans.ttf"],
+  },
   async headers() {
     return [
       {
